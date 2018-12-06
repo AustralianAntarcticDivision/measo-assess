@@ -34,3 +34,4 @@ There is a summer bias in SO in Access, uses UM, lots of techniques been tried t
 - Andrew L happy to set up a pipeline to output stuff and dump it somewhere
 - 5th or 10th percentile approach is prob best, no model is great over the shelf
 
+Andrew Meijers has a published list of best products, and S Corney
