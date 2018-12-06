@@ -2,6 +2,12 @@
 
 Andrew Lenton CSIRO, AConstable, SKawaguchi, JMelb-Thomas, Rowan Trebilico, MSumner
 
+Goals
+
+* habitat projections, assessment summary stats, interest especially in extreme differentiation, e.g. west ant ice shelf, also east ant is a big unknown
+* krill projections, ocean acidification and application of a krill model
+* time slice stuff with Atlantis
+
 Q
 
 - navigate outputs, on raijin? sqlite db?  catalogue?
