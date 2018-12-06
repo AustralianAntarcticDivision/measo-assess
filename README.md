@@ -8,6 +8,13 @@ Goals
 * krill projections, ocean acidification and application of a krill model
 * time slice stuff with Atlantis
 
+Summary
+
+- lcol is likely to be a good start for Atlantis
+- 
+
+
+
 Q
 
 - navigate outputs, on raijin? sqlite db?  catalogue?
@@ -41,3 +48,6 @@ There is a summer bias in SO in Access, uses UM, lots of techniques been tried t
 - 5th or 10th percentile approach is prob best, no model is great over the shelf
 
 Andrew Meijers has a published list of best products, and S Corney
+
+Lot of value in overshoot space, compelling arguments for mitigating now
+
