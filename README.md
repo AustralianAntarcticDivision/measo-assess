@@ -27,7 +27,7 @@ mark3-lcol - steven phipps model, coupled to carbon cycle (two degree resolution
 Tool - ecm val
 - take the cmip6 output and produce a whole lot of output
 - could incorporate our diagnostic approach ?
-
+- Andrew L also keen to align to standards for output, e.g. COARDs etc. 
 
 
 There is a summer bias in SO in Access, uses UM, lots of techniques been tried to overcome - the higher res stuff is better
