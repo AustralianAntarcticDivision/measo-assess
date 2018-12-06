@@ -1,6 +1,12 @@
 # measo-access
 
-Andrew Lenton CSIRO, AConstable, SKawaguchi, 
+Andrew Lenton CSIRO, AConstable, SKawaguchi, JMelb-Thomas, Rowan Trebilico, MSumner
+
+Q
+
+- navigate outputs, on raijin? sqlite db?  catalogue?
+
+
 what scenarios? 
 
 ACCESS-ESM
