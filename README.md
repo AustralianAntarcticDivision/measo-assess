@@ -30,4 +30,4 @@ Tool - ecm val
 
 
 
-
+There is a summer bias in SO in access, uses UM, lots of techniques been tried to overcome
