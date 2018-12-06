@@ -30,4 +30,5 @@ Tool - ecm val
 
 
 
-There is a summer bias in SO in access, uses UM, lots of techniques been tried to overcome
+There is a summer bias in SO in Access, uses UM, lots of techniques been tried to overcome - the higher res stuff is better
+- Andrew happen to set up a pipeline to output stuff and dump it somewhere
