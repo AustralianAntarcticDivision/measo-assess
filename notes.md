@@ -21,3 +21,10 @@ In ocean_bgc.nc-YYYMMDD we would get say ‘phyc’ and ‘zooc’. These are ty
 In ocean_month.nc-YYYMMDD we would get say ‘tos’ (single sea surface temperature layer)
 
 Be good to crop out whole Southern Ocean spatially, and 6 time slices of one or two single-layer variables would not be a big size for export
+
+
+Any ice stuff would be located in:
+
+/g/data1a/p66/txz599/ACCESS/archive/RCP-85-10F/history/ice/
+
+I haven’t looked into these, but its file nomenclature is iceh.YYYY-MM.nc so looks like 1 month per file, and say the relevant single layer variable would be ‘sic’
