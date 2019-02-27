@@ -111,7 +111,7 @@ tab <- tabularaster::as_tibble(r, index = TRUE) %>%
 tab$bathy[tab$continent] <- "Continent"
 
 tab$bathy <- ordered(tab$bathy, c("Deep", "Bank/Plateau", "Island", "Continent"))
-
+saveRDS(tab, "grid_tab.rds")
 
 
 sec_class <- tab %>% 
