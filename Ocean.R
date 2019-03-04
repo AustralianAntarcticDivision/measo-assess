@@ -95,20 +95,98 @@ front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "sacc
 
 
 latbreaks <- seq(-80.5, -19.5, by = 1)
-tab1 <- tab %>% dplyr::filter(!is.na(ssha)) %>% group_by(latitude = cut(latitude, latbreaks), sector) %>% 
+ssh1 <- tab %>% dplyr::filter(!is.na(ssha)) %>% group_by(latitude = cut(latitude, latbreaks), sector) %>% 
   summarize(ssha_median = median(ssha, na.rm = TRUE), 
             ssha_lo = quantile(ssha, 0.2, na.rm = TRUE), 
             ssha_hi = quantile(ssha, 0.8, na.rm = TRUE))
-tab1$latitude <- (head(latbreaks, -1)+0.5)[tab1$latitude]
+ssh1$latitude <- (head(latbreaks, -1)+0.5)[ssh1$latitude]
 
-ggplot(tab1) + 
+ggplot(ssh1) + 
   geom_point(aes(latitude, ssha_median), pch=".") + 
   geom_ribbon(aes(latitude, ymin = ssha_lo, ymax = ssha_hi), alpha = 0.5) + 
   geom_segment(data = front, lwd = 2, aes(front_lo, y, xend = front_hi, yend = y, col = front)) + 
   geom_point(data = front, aes(front_median, y)) + 
   
   facet_wrap(~ordered(sector, c("WestPacific", "EastPacific", "Atlantic", "Indian")), ncol = 1) + 
-  ylim(c(0, 0.18))
+  ylim(c(0, 0.2)) + 
+  ggtitle("Sea level anomaly (m)", "Sea surface height above mean sea surface 1993-2012 period")
+ggsave("SSH.png")
 
 
 
+
+mag1 <- tab %>% dplyr::filter(!is.na(mag)) %>% group_by(latitude = cut(latitude, latbreaks), sector) %>% 
+  summarize(mag_median = median(mag, na.rm = TRUE), 
+            mag_lo = quantile(mag, 0.2, na.rm = TRUE), 
+            mag_hi = quantile(mag, 0.8, na.rm = TRUE))
+mag1$latitude <- (head(latbreaks, -1)+0.5)[mag1$latitude]
+
+ggplot(mag1) + 
+  geom_point(aes(latitude, mag_median), pch=".") + 
+  geom_ribbon(aes(latitude, ymin = mag_lo, ymax = mag_hi), alpha = 0.5) + 
+  geom_segment(data = front, lwd = 2, aes(front_lo, y, xend = front_hi, yend = y, col = front)) + 
+  geom_point(data = front, aes(front_median, y)) + 
+  
+  facet_wrap(~ordered(sector, c("WestPacific", "EastPacific", "Atlantic", "Indian")), ncol = 1) + 
+  ylim(c(0, 0.5)) + 
+  ggtitle("Absolute geostrophic velocity (m/s)", "Sea Surface Height measured by Altimetry and derived variables")
+ggsave("EKE.png")
+
+
+
+fronts <- spbabel::sptable(orsifronts::orsifronts)
+fronts$front <- orsifronts::orsifronts$front[fronts$object_]
+fronts$sector <- zones_ll$SectorName[ over(SpatialPoints(as.matrix(fronts[c("x_", "y_")])), as(sf::st_set_crs(sf::st_geometry(zones_ll), NA), "Spatial"))]
+front <- fronts %>% group_by(sector, front) %>% 
+  summarize(front_median = median(y_), 
+            front_hi = quantile(y_, 0.8), 
+            front_lo = quantile(y_, 0.2))
+
+front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "saccf", "sbdy", "stf"), 
+                                                    y = 10), "front")
+
+
+temp1 <- tab %>% dplyr::filter(!is.na(sst)) %>% group_by(latitude = cut(latitude, latbreaks), sector) %>% 
+  summarize(sst_median = median(sst, na.rm = TRUE), 
+            sst_lo = quantile(sst, 0.2, na.rm = TRUE), 
+            sst_hi = quantile(sst, 0.8, na.rm = TRUE))
+temp1$latitude <- (head(latbreaks, -1)+0.5)[temp1$latitude]
+
+ggplot(temp1) + 
+  geom_point(aes(latitude, sst_median), pch=".") + 
+  geom_ribbon(aes(latitude, ymin = sst_lo, ymax = sst_hi), alpha = 0.5) + 
+  geom_segment(data = front, lwd = 2, aes(front_lo, y, xend = front_hi, yend = y, col = front)) + 
+  geom_point(data = front, aes(front_median, y)) + 
+  
+  facet_wrap(~ordered(sector, c("WestPacific", "EastPacific", "Atlantic", "Indian")), ncol = 1) + 
+  ggtitle("Surface Temperature (C)", "Daily-OI-V2, Final, Data \n(Ship, Buoy, AVHRR: NOAA19, METOP, NCEP-ice)")
+ggsave("SST.png")
+
+
+fronts <- spbabel::sptable(orsifronts::orsifronts)
+fronts$front <- orsifronts::orsifronts$front[fronts$object_]
+fronts$sector <- zones_ll$SectorName[ over(SpatialPoints(as.matrix(fronts[c("x_", "y_")])), as(sf::st_set_crs(sf::st_geometry(zones_ll), NA), "Spatial"))]
+front <- fronts %>% group_by(sector, front) %>% 
+  summarize(front_median = median(y_), 
+            front_hi = quantile(y_, 0.8), 
+            front_lo = quantile(y_, 0.2))
+
+front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "saccf", "sbdy", "stf"), 
+                                                    y = 10), "front")
+
+
+west1 <- tab %>% dplyr::filter(!is.na(west)) %>% group_by(latitude = cut(latitude, latbreaks), sector) %>% 
+  summarize(west_median = median(west, na.rm = TRUE), 
+            west_lo = quantile(west, 0.2, na.rm = TRUE), 
+            west_hi = quantile(west, 0.8, na.rm = TRUE))
+west1$latitude <- (head(latbreaks, -1)+0.5)[west1$latitude]
+
+ggplot(west1) + 
+  geom_point(aes(latitude, west_median), pch=".") + 
+  geom_ribbon(aes(latitude, ymin = west_lo, ymax = west_hi), alpha = 0.5) + 
+  geom_segment(data = front, lwd = 2, aes(front_lo, y, xend = front_hi, yend = y, col = front)) + 
+  geom_point(data = front, aes(front_median, y)) + 
+  
+  facet_wrap(~ordered(sector, c("WestPacific", "EastPacific", "Atlantic", "Indian")), ncol = 1) + 
+  ggtitle("Westerly wind strength (m/s)", "NCEP/DOE AMIP-II Reanalysis, \n6-Hourly Forecast of U-wind at 10 m")
+ggsave("WEST.png")
