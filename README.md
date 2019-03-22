@@ -1,5 +1,37 @@
 # measo-access
 
+
+Andrew C's [MEASO Biota-Habitatssoki page](http://soki.aq/display/MEASO/MEASO+Biota-Habitats) outlines these aims, and a long list of possibly relevant variables. 
+
+In DecadalProto we used the last 10yrs of SST, EKE, SSH, ICE-Season, and Spring/Summer CHLA
+
+>The aim here is to summarise the nature of habitats in the Southern Ocean and how they may vary in space and time.  Habitat metrics reported here are those that are considered to represent spatio-temporal scales of primary importance to biota in the Southern Ocean.  Some metrics are comparatively unchanging, e.g. bathymetry, while others will need to be reported seasonally.  In space, finer grain reporting occurs when taxa are restricted in their distributions, while coarser grain reporting, e.g. whole sectors, is suitable for widely distributed taxa. 
+
+>Where possible, consideration will be given to changes that have occurred since the industrial revolution.  As per the IPCC, we use 1750 as marking the beginning of the industrial period.
+
+>Methods
+
+>A habitat assessment has the following steps (here, the focus is on physical factors):
+
+>*Identify important physical parameters that can be summarised as an attribute of habitat of one or more species
+>*Identify the attributes to be derived from one or more parameters that are important to the species e.g. temperature thresholds important to the success of species
+>*Identify the quantity/quantities for expressing the status and trends of the attributes
+>*Establish links to the appropriate datasets and extract the quantities for presentation
+
+
+
+## Data on RAATD
+
+Early extraction products are in 
+
+"/mnt/home/<someuser>/RAATD_01/RAATDfuture/Working/Data/Climate"
+
+Use these to convert into the DecadalProto form. 
+
+
+
+## Meeting 23 January 2019
+
 Andrew Lenton CSIRO, AConstable, SKawaguchi, JMelb-Thomas, Rowan Trebilico, MSumner
 
 Goals
