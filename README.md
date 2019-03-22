@@ -26,7 +26,10 @@ Early extraction products are in
 
 "/mnt/home/<someuser>/RAATD_01/RAATDfuture/Working/Data/Climate"
 
+They will be moved to RDSI soon once the next extractions are done. 
+
 Use these to convert into the DecadalProto form. 
+
 
 
 
