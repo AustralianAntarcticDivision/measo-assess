@@ -1,10 +1,12 @@
-vname <- "par"
+vname <- "Kd_490"
+
 pfiles <- raadtools::ocfiles(time.resolution = "monthly", product = "MODISA", varname = toupper(gsub("_", "", vname)), type = "L3m")
 library(furrr)
 plan(multiprocess)
 
 library(dplyr)
-pfiles$decade <- as.integer(factor(cut(pfiles$date, aceecostats::aes_decades, labels = FALSE)))
+#pfiles$decade <- as.integer(factor(cut(pfiles$date, aceecostats::aes_decades, labels = FALSE)))
+pfiles$decade <- rep(1:2, each = nrow(pfiles)/2)
 pfiles <- pfiles %>% dplyr::filter(!is.na(decade))
 
 
@@ -66,23 +68,26 @@ d <- bind_rows(l)
 
 
 
-if (vname == "par") saveRDS(d, "LightProto/PAR.rds")
-if (vname == "Kd_490") saveRDS(d, "LightProto/KD490.rds")
+if (vname == "par") saveRDS(d, "Light2/PAR.rds")
+if (vname == "Kd_490") saveRDS(d, "Light2/KD490.rds")
 library(ggplot2)
 ##PAR
-d <- readRDS("LightProto/PAR.rds")
+d <- readRDS("Light2/PAR.rds")
 #d$par <- d$sum
 dd <- d %>% group_by(sector, decade, lat, month) %>% summarize(par= mean(sum, na.rm = TRUE), q10 = quantile(sum, .1), 
                                                                q90 = quantile(sum, 0.9)) %>% ungroup()
+
+#aes_cols <- setNames(aceecostats::aes_zone_cols()$col, aceecostats::aes_zone_cols()$name)
+
 ggplot(dd) + geom_bar(aes(x = month, y = par, fill = factor(decade)), position = "dodge", stat = "identity") + 
   geom_errorbar(aes(x = month, ymin= q10, ymax= q90, group = decade), width = 0.2, position = position_dodge(0.5)) +
   facet_grid(sector~lat)  + 
   ggtitle("Photosynthetically Available Radiation\n R. Frouin einstein day^-1")
 
-ggsave("LightProto/PAR.png")
+ggsave("Light2/PAR.png")
 
 
-d <- readRDS("LightProto/KD490.rds")
+d <- readRDS("Light2/KD490.rds")
 d$kd490 <- d$sum
 dd <- d %>% group_by(sector, decade, lat, month) %>% summarize(kd490 = mean(sum, na.rm = TRUE), q10 = quantile(sum, .1), 
                                                   q90 = quantile(sum, 0.9)) %>% ungroup()
@@ -92,7 +97,7 @@ ggplot(dd) + geom_bar(aes(x = month, y = kd490, fill = factor(decade)), position
   facet_grid(sector~lat)  + 
   ggtitle("Diffuse attenuation coefficient at 490 nm,\n KD2 algorithm m^-1")
 
-ggsave("LightProto/KD490.png")
+ggsave("Light2/KD490.png")
 
 # short par[lon,lat]   (Chunking: [44,22])  (Compression: shuffle,level 4)
 # long_name: Photosynthetically Available Radiation, R. Frouin
