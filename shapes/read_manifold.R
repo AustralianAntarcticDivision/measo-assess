@@ -1,0 +1,16 @@
+options(Ncpus = parallel::detectCores()-1)
+install.packages("devtools", repos = "http://144.6.252.29:8000/")
+devtools::install_github("mdsumner/manifoldr")
+load("C:\\Users\\michae_sum\\Downloads\\MEASO.map")
+f <- "C:\\Users\\michae_sum\\Downloads\\MEASO.map"
+con <- manifoldr::odbcConnectManifold(f)
+sqlTables(con)
+RODBC::sqlTables(con)
+sectors <- Drawing(f, "MEASO_Sectors_6 Table")
+library(manifoldr)
+sectors <- Drawing(f, "MEASO_Sectors_6 Table")
+zones <- Drawing(f, "MEASO_Zones Table")
+save(sectors, file = "sectors.Rdata")
+save(zones, file = "zones.Rdata")
+history(Inf)
+

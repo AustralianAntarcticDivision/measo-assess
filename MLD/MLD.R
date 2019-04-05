@@ -66,3 +66,5 @@ ggsave("MLD/MLD_month_latitude.png")
 #   quadmesh::mesh_plot(x[[1]], coords = subset(x, 2:3), ...)
 # }
 # mesh_low(mld, cds, crs = "+proj=stere +lat_0=-90", fact = 4)
+
+mesh_low(mld, cds)

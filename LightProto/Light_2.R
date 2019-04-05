@@ -1,4 +1,6 @@
-vname <- "Kd_490"
+
+
+vname <- "par"
 
 pfiles <- raadtools::ocfiles(time.resolution = "monthly", product = "MODISA", varname = toupper(gsub("_", "", vname)), type = "L3m")
 library(furrr)
@@ -76,6 +78,11 @@ d <- readRDS("Light2/PAR.rds")
 #d$par <- d$sum
 dd <- d %>% group_by(sector, decade, lat, month) %>% summarize(par= mean(sum, na.rm = TRUE), q10 = quantile(sum, .1), 
                                                                q90 = quantile(sum, 0.9)) %>% ungroup()
+
+# ggplot(d %>% dplyr::filter(decade == 2, lat == "-65")) + 
+#   geom_boxplot(aes(month, mean)) + 
+#   facet_grid(sector~lat)
+
 
 #aes_cols <- setNames(aceecostats::aes_zone_cols()$col, aceecostats::aes_zone_cols()$name)
 
