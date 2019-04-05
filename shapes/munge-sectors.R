@@ -18,8 +18,10 @@ line_extend <- function(x, ylim) {
       sam <- subset(rnaturalearth::ne_countries(), sovereignt %in% c("Chile", "Argentina"))
       arc <- silicate::ARC(sam)
       #arcs we want (it's broken atm)
-      v <- arc$arc_link_vertex %>% filter(arc_ == arc$object_link_arc$arc_[2]) %>% 
-        inner_join(arc$vertex) %>% select(x_, y_) #%>% plot(asp = 1)
+      v <- arc$arc_link_vertex %>% 
+        dplyr::filter(arc_ == arc$object_link_arc$arc_[2]) %>% 
+        dplyr::inner_join(arc$vertex) %>% 
+        dplyr::select(x_, y_) #%>% plot(asp = 1)
       
         x$geometry[[i]] <- st_linestring(cbind(c(xxs[c(1, 1, 2)], rev(v$x_)), 
                                                c(ylim[1], yys, rev(v$y_))))
@@ -40,15 +42,7 @@ lns <- st_sf(geometry = c(st_geometry(sectors2),
                           st_geometry(domain),
 st_geometry(zones)), crs = 4326)
 
-plot(st_cast(st_polygonize(st_union(lns))), col = sample(viridis::viridis(29)), reset = F)
-maps::map(add = T)
+measo_regions01 <- st_cast(st_polygonize(st_union(lns)))
+saveRDS(measo_regions01, "data/measo_regions01.rds")
 
 
-lns <- st_sf(geometry = c(st_geometry(sectors2), 
-                          st_geometry(domain), 
-                          st_geometry(zones)), crs = 4326)
-
-g<- c(st_geometry(zones), st_geometry(sectors))
-
-
-spbabel::sptable(sectors)
