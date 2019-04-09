@@ -8,19 +8,33 @@ library(measoshapes)
 # sf::st_write(zones_ll, "zones_ll.shp")
 # sf::st_write(zones, "zones.shp")
 # setwd("..")
-topo <- readtopo("etopo2", xylim = extent(-180, 180,-80,-20))
+topo <- readtopo("etopo2", xylim = extent(-180, 180,-80,-35))
 library(sf)
 measo_regions02_ll <- dplyr::inner_join(measo_regions02_ll, measo_names, "name")
 
 cn <- cellnumbers(topo, measo_regions02_ll)
+## lookup ice shelf
+coast <- SOmap::SOmap_data$ADD_coastline_med
+## speed this stuff up
+
+surf <- c("ice_shelf", "land", "ice_shelf", "ice_shelf")
+coast_r <- fasterize::fasterize(sf::st_as_sf(coast), raster(coast, res = 1000), field = "gridcode")
+cn$type <- surf[raster::extract(coast_r, rgdal::project(xyFromCell(topo, cn$cell_), raster::projection(coast_r)), 
+                           method = "simple")]
 latbreaks <- seq(-80.5, -19.5, by = 1)
 cn$lon <- xFromCell(topo, cn$cell_)
 cn$lat <- yFromCell(topo, cn$cell_)
 cn$zone <- measo_regions02_ll$zone[cn$object_]
 cn$sector <- measo_regions02_ll$sector[cn$object_]
-cn$sector <- factor(cn$sector, c("EastPacific", "WestAtlantic", "EastAtlantic", "CentralIndian", "EastIndian", "WestPacific"))
+cn <- dplyr::filter(cn, !is.na(zone))
+cn$sector <- factor(cn$sector, c("EastPacific", "WestAtlantic", "EastAtlantic", 
+                                 "CentralIndian", "EastIndian", "WestPacific"))
 cn$depth <- raster::extract(topo, cn$cell_)
-depth <- cn %>% dplyr::filter(depth < 0, !is.na(zone)) %>%
+cn$type[cn$depth >= 0 & is.na(cn$type)] <- "land"
+cn$type[cn$depth < 0 & cn$depth > -2000 & is.na(cn$type)] <- "topo_shelf"
+cn$type[cn$depth < -2000 & is.na(cn$type)] <- "deep"
+
+depth <- cn  %>%
   group_by(
     latitude = cut(lat, latbreaks),
     
