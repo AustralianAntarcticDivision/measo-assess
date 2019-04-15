@@ -200,6 +200,7 @@ read_season <- function(thresh = "15", dp = "/rdsi/PRIVATE/raad/data_local/aad.g
 }
 
 season05 <- read_season("05")
+season15 <- read_season("15")
 season25 <- read_season("25")
 season75 <- read_season("75")
 season95 <- read_season("95")
@@ -211,6 +212,9 @@ tab <- readRDS("prototypes/DecadalProto/grid_tab.rds")
 tabxy <- reproj::reproj(cbind(tab$longitude, tab$latitude), prj, 
                         source = "+proj=longlat +datum=WGS84")[, 1:2, drop = FALSE]
 tab[c("advance05", "retreat05")] <- raster::extract(season05, 
+                                                    tabxy, 
+                                                    method = "bilinear")
+tab[c("advance15", "retreat15")] <- raster::extract(season15, 
                                                     tabxy, 
                                                     method = "bilinear")
 tab[c("advance25", "retreat25")] <- raster::extract(season25, 
@@ -227,17 +231,19 @@ latbreaks <- seq(-80.5, -19.5, by = 1)
 adv_tab<- tab %>% 
   #dplyr::filter(!is.na(advance70)) %>%
   group_by(latitude = cut(latitude, latbreaks), sector) %>% 
-  summarize(advance05 = median(advance05, na.rm = TRUE), 
+  summarize(advance15 = median(advance15, na.rm = TRUE), 
             advance25 = median(advance25, na.rm = TRUE), 
             advance75 = median(advance75, na.rm = TRUE), 
             advance95 = median(advance95, na.rm = TRUE), 
-            retreat05 = median(retreat05, na.rm = TRUE), 
+            retreat15 = median(retreat15, na.rm = TRUE), 
             retreat25 = median(retreat25, na.rm = TRUE),            
             retreat75 = median(retreat75, na.rm = TRUE), 
             retreat95 = median(retreat95, na.rm = TRUE))
 
 idx <- which((adv_tab$retreat05 - adv_tab$advance05) < 0)
 if (length(idx) > 0) adv_tab$retreat05[idx] <- NA; adv_tab$advance05[idx] <- NA
+idx <- which((adv_tab$retreat15 - adv_tab$advance15) < 0)
+if (length(idx) > 0) adv_tab$retreat15[idx] <- NA; adv_tab$advance15[idx] <- NA
 idx <- which((adv_tab$retreat25 - adv_tab$advance25) < 0)
 if (length(idx) > 0) adv_tab$retreat25[idx] <- NA; adv_tab$advance25[idx] <- NA
 idx <- which((adv_tab$retreat75 - adv_tab$advance75) < 0)
@@ -267,8 +273,8 @@ front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "sacc
 
 library(ggplot2)
 ggplot(adv_tab) + 
-  geom_segment(aes(latitude, advance05, xend = latitude, yend = retreat05), lwd = 5) + 
-  geom_segment(aes(latitude, advance25, xend = latitude, yend = retreat25), lwd = 4, col = "purple2") + 
+  geom_segment(aes(latitude, advance15, xend = latitude, yend = retreat15), lwd = 5) + 
+  #geom_segment(aes(latitude, advance25, xend = latitude, yend = retreat25), lwd = 4, col = "purple2") + 
   
  geom_segment(aes(latitude, advance75, xend = latitude, yend = retreat75), lwd = 3, col = "#21908C") + 
   geom_segment(aes(latitude, advance95, xend = latitude, yend = retreat95), lwd = 2, col = "yellow3") + 
@@ -278,9 +284,9 @@ ggplot(adv_tab) +
   geom_point(data = front, aes(front_median, day)) +
   ylab("sea ice season") + 
    xlim(c(-80, -30)) + 
-   ggtitle("Zonal-median sea ice season (2009-2019)", "Black: 5%, Purple: 25%, Green: 75%, Yellow: 95% concentration")
+   ggtitle("Zonal-median sea ice season (2009-2019)", "Black: 15%,  Green: 75%, Yellow: 95% concentration")
 
-     ggsave("ICE-season.png")
+     #ggsave("ICE-season.png")
    
    
    

@@ -15,8 +15,6 @@ measo_regions02_ll <- dplyr::inner_join(measo_regions02_ll, measo_names, "name")
 cn <- cellnumbers(topo, measo_regions02_ll)
 ## lookup ice shelf
 coast <- SOmap::SOmap_data$ADD_coastline_med
-## speed this stuff up
-
 surf <- c("ice_shelf", "land", "ice_shelf", "ice_shelf")
 coast_r <- fasterize::fasterize(sf::st_as_sf(coast), raster(coast, res = 1000), field = "gridcode")
 cn$type <- surf[raster::extract(coast_r, rgdal::project(xyFromCell(topo, cn$cell_), raster::projection(coast_r)), 
@@ -27,14 +25,15 @@ cn$lat <- yFromCell(topo, cn$cell_)
 cn$zone <- measo_regions02_ll$zone[cn$object_]
 cn$sector <- measo_regions02_ll$sector[cn$object_]
 cn <- dplyr::filter(cn, !is.na(zone))
-cn$sector <- factor(cn$sector, c("EastPacific", "WestAtlantic", "EastAtlantic", 
-                                 "CentralIndian", "EastIndian", "WestPacific"))
+cn$sector <- ordered(cn$sector, c("WestPacific", "EastPacific", "WestAtlantic", "EastAtlantic", 
+                                 "CentralIndian", "EastIndian"))
+cn$zone <- ordered(cn$zone, c("Antarctic", "Subantarctic", "Northern"))
 cn$depth <- raster::extract(topo, cn$cell_)
 cn$type[cn$depth >= 0 & is.na(cn$type)] <- "land"
 cn$type[cn$depth < 0 & cn$depth > -2000 & is.na(cn$type)] <- "topo_shelf"
 cn$type[cn$depth < -2000 & is.na(cn$type)] <- "deep"
 
-depth <- cn  %>%
+depth <- cn  %>% dplyr::filter(depth < 0) %>% 
   group_by(
     latitude = cut(lat, latbreaks),
     
@@ -47,46 +46,32 @@ depth <- cn  %>%
   ) %>% ungroup()
 depth$latitude <- (head(latbreaks, -1)+0.5)[depth$latitude]
 
-ggplot(depth %>% dplyr::filter(depth_hi < -1, zone == "Antarctic")) + 
+fronts <- spbabel::sptable(orsifronts::orsifronts)
+fronts$front <- ordered(orsifronts::orsifronts$front[fronts$object_], 
+                        c("sbdy", "saccf", "pf", "saf", "stf"))
+fronts$sector <- measo_regions02_ll$sector[ over(SpatialPoints(as.matrix(fronts[c("x_", "y_")])), as(sf::st_set_crs(sf::st_geometry(measo_regions02_ll), NA), "Spatial"))]
+fronts$depth <- raster::extract(topo, cbind(fronts$x_, fronts$y_), method = "bilinear")
+front <- fronts %>% group_by(sector, front) %>% 
+  summarize(front_median = median(y_), 
+            front_hi = quantile(y_, 0.8), 
+            front_lo = quantile(y_, 0.2), 
+            depth = median(depth, na.rm = TRUE))
+
+front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "saccf", "sbdy", "stf")),  "front")
+front <- front %>% dplyr::filter(!is.na(sector))
+
+
+ggplot(depth ) + #%>% dplyr::filter(depth_hi < -1, zone == "Antarctic")) + 
   geom_line(aes(latitude, depth_mean, group = zone)) + 
   geom_ribbon(aes(latitude, ymax = depth_hi, 
-                  ymin = depth_lo, colour = zone, group = zone), alpha = 0.5) + 
-  #facet_wrap(~sector, ncol = 1)
+                  ymin = depth_lo, fill = zone, group = zone), alpha = 0.5) + 
+  facet_wrap(~sector, ncol = 1) +
+  geom_segment(data = front, lwd = 2, aes(front_lo, depth, xend = front_hi, yend = depth, col = front)) + 
+  geom_point(data = front, aes(front_median, depth)) 
   
-  #geom_segment(data = front, lwd = 2, aes(front_lo, depth, xend = front_hi, yend = depth, col = front)) + 
-  #geom_point(data = front, aes(front_median, depth)) + 
   
-  
-  facet_wrap(~sector) 
+ 
 
-#   
-# 
-# library(ggplot2)
-# library(dplyr)
-# library(raadtools)
-# library(tabularaster)
-# #lats <- graticule::graticule(seq(-180, 180, by = 10), 
-# #                             seq(-87.5, -22.5, by = 5), tiles = TRUE)
-# 
-# # zones_ll <- sf::st_as_sf(aceecostats::aes_zone_ll) %>% #mutate(Zone = case_when(Zone == "High-Latitude" ~ "Polar", 
-# #   #                   Zone == "Mid-Latitude" ~ "Subantarctic", 
-# #   #                 Zone == "Continent" ~ "Polar")) %>% 
-# #   group_by(SectorName) %>% 
-# #   summarize() %>% ungroup() %>% sf::st_cast()
-# # 
-# 
-# fronts <- spbabel::sptable(orsifronts::orsifronts)
-# fronts$front <- orsifronts::orsifronts$front[fronts$object_]
-# fronts$sector <- measo_regions02_ll$sector[ over(SpatialPoints(as.matrix(fronts[c("x_", "y_")])), as(sf::st_set_crs(sf::st_geometry(measo_regions02_ll), NA), "Spatial"))]
-# fronts$depth <- raster::extract(topo, cbind(fronts$x_, fronts$y_), method = "bilinear")
-# front <- fronts %>% group_by(sector, front) %>% 
-#   summarize(front_median = median(y_), 
-#             front_hi = quantile(y_, 0.8), 
-#             front_lo = quantile(y_, 0.2), 
-#             depth = median(depth, na.rm = TRUE))
-# 
-# front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "saccf", "sbdy", "stf"), 
-#                                                     y = -500 - c(0, 200, 400, 600, 800)), "front")
 # 
 # 
 # 
