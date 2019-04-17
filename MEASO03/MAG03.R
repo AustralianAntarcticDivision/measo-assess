@@ -22,13 +22,18 @@ library(furrr)
 
 rebuild <- FALSE
 if (rebuild) {
-  dates <- sstfiles() %>% dplyr::filter(date > as.POSIXct("2009-03-01"), 
+  dates <- currentsfiles() %>% dplyr::filter(date > as.POSIXct("2009-03-01"), 
                                         format(date, "%m") == "02") %>%  mutate(Y = format(date, "%Y")) %>% split(.$Y)
 future::plan(multiprocess)  
-sst <- brick(furrr::future_map(dates, ~calc(readsst(.x$date,  xylim = extent(-180, 180,-80,-35)), 
+U <- brick(furrr::future_map(dates, ~calc(readcurr(.x$date, lon180 = FALSE, uonly = TRUE, xylim = extent(0, 360,-80,-35)), 
                                       fun = median, na.rm = TRUE)))
 
-GRID <- calc(sst, fun = median, na.rm = TRUE)
+V <- brick(furrr::future_map(dates, ~calc(readcurr(.x$date, lon180 = FALSE, vonly = TRUE, xylim = extent(0, 360,-80,-35)), 
+                                          fun = median, na.rm = TRUE)))
+
+
+GRID <- rotate(calc(sqrt(U*U + V*V), fun = median, na.rm = TRUE))
+
 
 
 
@@ -47,19 +52,20 @@ cn$sector <- ordered(cn$sector, c("WestPacific", "EastPacific", "WestAtlantic", 
 cn$zone <- ordered(cn$zone, c("Antarctic", "Subantarctic", "Northern"))
 
 
-cn$sst <- GRID[cn$cell_]
+cn$mag <- GRID[cn$cell_]
 
 
-bigtab <- cn  %>% dplyr::filter(!is.na(zone), !is.na(sst)) %>% 
+
+bigtab <- cn  %>% dplyr::filter(!is.na(zone), !is.na(mag)) %>% 
   group_by(
     latitude = cut(lat, latbreaks),
     
     sector, zone
   ) %>%
   summarize(
-    sst_median = mean(sst),
-    sst_hi = quantile(sst, 0.80),
-    sst_lo  = quantile(sst, 0.20)
+    mag_median = mean(mag),
+    mag_hi = quantile(mag, 0.80),
+    mag_lo  = quantile(mag, 0.20)
   ) %>% ungroup()
 bigtab$latitude <- (head(latbreaks, -1)+0.5)[bigtab$latitude]
 
@@ -67,12 +73,12 @@ fronts <- spbabel::sptable(orsifronts::orsifronts)
 fronts$front <- ordered(orsifronts::orsifronts$front[fronts$object_], 
                         c("sbdy", "saccf", "pf", "saf", "stf"))
 fronts$sector <- measo_regions03_ll$sector[ over(SpatialPoints(as.matrix(fronts[c("x_", "y_")])), as(sf::st_set_crs(sf::st_geometry(measo_regions03_ll), NA), "Spatial"))]
-fronts$sst <- raster::extract(GRID, cbind(fronts$x_, fronts$y_), method = "bilinear")
+fronts$mag <- raster::extract(GRID, cbind(fronts$x_, fronts$y_), method = "bilinear")
 front <- fronts %>% group_by(sector, front) %>% 
   summarize(front_median = median(y_), 
             front_hi = quantile(y_, 0.8), 
             front_lo = quantile(y_, 0.2), 
-            sst = median(sst, na.rm = TRUE))
+            mag = median(mag, na.rm = TRUE))
 
 
 
@@ -80,24 +86,24 @@ front <- front %>% ungroup() %>%  inner_join(tibble(front = c("pf", "saf", "sacc
 front <- front %>% dplyr::filter(!is.na(sector))
 front$front <- ordered(front$front, c("sbdy", "saccf", "pf", "saf", "stf"))
 
-saveRDS(bigtab, file = "MEASO03/sst.rds")
-saveRDS(front, file = "MEASO03/fronts_sst.rds")
+saveRDS(bigtab, file = "MEASO03/mag.rds")
+saveRDS(front, file = "MEASO03/fronts_mag.rds")
 
 }
 
-sst <- readRDS("MEASO03/sst.rds")
-front <- readRDS("MEASO03/fronts_sst.rds")
+mag <- readRDS("MEASO03/mag.rds")
+front <- readRDS("MEASO03/fronts_mag.rds")
 
-ggplot(sst) + #%>% dplyr::filter(depth_hi < -1, zone == "Antarctic")) + 
-  geom_line(aes(latitude, sst_median, group = zone)) + 
-  geom_ribbon(aes(latitude, ymax = sst_hi, 
-                  ymin = sst_lo, fill = zone, group = zone), alpha = 0.5) + 
+ggplot(mag) + #%>% dplyr::filter(depth_hi < -1, zone == "Antarctic")) + 
+  geom_line(aes(latitude, mag_median, group = zone)) + 
+  geom_ribbon(aes(latitude, ymax = mag_hi, 
+                  ymin = mag_lo, fill = zone, group = zone), alpha = 0.5) + 
   facet_wrap(~ordered(sector, c("WestAtlantic", "CentralIndian", "EastIndian", "WestPacific", "EastPacific")), ncol = 1) +
-  geom_segment(data = front, lwd = 2, aes(front_lo, sst, xend = front_hi, yend = sst, col = front)) + 
-  geom_point(data = front, aes(front_median, sst))  + 
-  ggtitle("Sea Surface Temperature (C)", 
-          "OISST")
-ggsave("MEASO03/SST03.png")
+  geom_segment(data = front, lwd = 2, aes(front_lo, mag, xend = front_hi, yend = mag, col = front)) + 
+  geom_point(data = front, aes(front_median, mag))  + 
+  ggtitle("Water movement (m-s)", 
+          "MAG")
+ggsave("MEASO03/MAG03.png")
   
   
  
