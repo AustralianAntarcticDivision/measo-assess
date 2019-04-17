@@ -112,6 +112,9 @@ saveRDS(adv_tab, file = "MEASO03/ice.rds")
 saveRDS(front, file = "MEASO03/fronts_ice.rds")
 
 }
+
+adv_tab <- readRDS("MEASO03/ice.rds")
+front <- readRDS("MEASO03/fronts_ice.rds")
 library(ggplot2)
 ggplot(adv_tab) + 
   geom_segment(aes(latitude, advance15, xend = latitude, yend = retreat15), lwd = 5) + 
