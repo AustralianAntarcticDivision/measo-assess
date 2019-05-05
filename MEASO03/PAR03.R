@@ -10,9 +10,11 @@ if (FALSE) {
                   date > as.POSIXct("2008-09-15"))
   library(furrr)
   plan(multiprocess)
+  ex <-  extent(-180, 180, -80, -29)
   PAR <- raster::brick(furrr::future_map(pfiles$fullname, 
-                        ~crop(raster::raster(.x, varname = "par"), ex))
-  PAR <- median(PAR, na.rm = TRUE)
+                        ~crop(raster::raster(.x, varname = "par"), ex)))
+  
+  PAR <- calc(PAR, median, na.rm = TRUE)
   
   library(furrr)
   plan(multiprocess)
