@@ -1,0 +1,30 @@
+---
+title: "MEASO - Build Figures"
+output:
+  rmarkdown::html_vignette:
+    fig_width: 7
+    fig_height: 7
+vignette: >
+  %\VignetteIndexEntry{MEASO-Figures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## MEASO Figures
+
+Are available at: https://australianantarcticdivision.github.io/measo-assess/MEASO-figures.zip
+
+(This document exists only to create that .zip artefact.) 
+
+```{r zipit}
+files <- fs::dir_ls(here::here("prototypes/MEASO05"), glob = "*.png")
+zip(here::here("docs/MEASO-figures.zip"), files = files)
+```
+

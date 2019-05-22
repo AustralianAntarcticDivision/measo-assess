@@ -2,5 +2,7 @@ pandoc: 2.3.1
 pkgdown: 1.3.0
 pkgdown_sha: ~
 articles:
-  PFH: PFH.html
+  MEASO_build_figures: MEASO_build_figures.html
+  PEA-Production-Energy-Available: PEA-Production-Energy-Available.html
+  PFH-Production-Food-Habitat: PFH-Production-Food-Habitat.html
 
