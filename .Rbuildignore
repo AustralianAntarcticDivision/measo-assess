@@ -1,0 +1,7 @@
+^data$
+.*\\.rds$
+^docs$
+\\.*\\.Rproj$
+^old$
+^prototypes$
+^\.Rproj\.user$

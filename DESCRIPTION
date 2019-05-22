@@ -1,0 +1,16 @@
+Package: measo.figs
+Title: MEASO figures
+Version: 0.0.1
+Authors@R: c(
+    person("Michael", "Sumner", email = "michael.sumner@aad.gov.au", 
+    role = c("aut", "cre")))
+Description: MEASO
+Depends: R (>= 3.4.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
