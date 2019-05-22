@@ -4,3 +4,7 @@
 .Ruserdata
 *.rds
 docs/
+data/
+documents/
+old/
+prototypes/
