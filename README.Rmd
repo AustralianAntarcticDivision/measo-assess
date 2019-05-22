@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```
 # MEASO assessment figures
 
-Figure Articles: 
+Figure Articles: https://australianantarcticdivision.github.io/measo-assess/articles/
 
 
 ## WIP

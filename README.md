@@ -4,6 +4,7 @@
 # MEASO assessment figures
 
 Figure Articles:
+<https://australianantarcticdivision.github.io/measo-assess/articles/>
 
 ## WIP
 
