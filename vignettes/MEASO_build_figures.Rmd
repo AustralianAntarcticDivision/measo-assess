@@ -25,6 +25,9 @@ Are available at: https://australianantarcticdivision.github.io/measo-assess/MEA
 
 ```{r zipit}
 files <- fs::dir_ls(here::here("prototypes/MEASO05"), glob = "*.png")
-zip(here::here("docs/MEASO-figures.zip"), files = files)
+bfiles <- basename(files)
+file.copy(files, bfiles)
+zip(here::here("docs/MEASO-figures.zip"), files = bfiles)
+file.remove(bfiles)
 ```
 

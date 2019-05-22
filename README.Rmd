@@ -7,7 +7,7 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
+  comment = "",
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
@@ -16,7 +16,15 @@ knitr::opts_chunk$set(
 
 Figure Articles: https://australianantarcticdivision.github.io/measo-assess/articles/
 
-Figure Files (.zip):  https://australianantarcticdivision.github.io/measo-assess/MEASO-figures.zip
+Figure Files (PNG, .zip):  https://australianantarcticdivision.github.io/measo-assess/MEASO-figures.zip
+
+
+## List of available PNG files 
+
+```{r files, echo = FALSE}
+writeLines(sort(basename(unzip(here::here("docs/MEASO-figures.zip"), list = TRUE)$Name)))
+
+```
 
 
 ## WIP

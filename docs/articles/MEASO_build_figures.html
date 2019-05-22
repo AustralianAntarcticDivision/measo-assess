@@ -92,7 +92,14 @@
 <p>Are available at: <a href="https://australianantarcticdivision.github.io/measo-assess/MEASO-figures.zip" class="uri">https://australianantarcticdivision.github.io/measo-assess/MEASO-figures.zip</a></p>
 <p>(This document exists only to create that .zip artefact.)</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">files &lt;-<span class="st"> </span>fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(here<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/here/topics/here">here</a></span>(<span class="st">"prototypes/MEASO05"</span>), <span class="dt">glob =</span> <span class="st">"*.png"</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/zip">zip</a></span>(here<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/here/topics/here">here</a></span>(<span class="st">"docs/MEASO-figures.zip"</span>), <span class="dt">files =</span> files)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">bfiles &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/basename">basename</a></span>(files)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/files">file.copy</a></span>(files, bfiles)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#&gt;  [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co">#&gt; [15] TRUE TRUE TRUE TRUE TRUE TRUE TRUE</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/zip">zip</a></span>(here<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/here/topics/here">here</a></span>(<span class="st">"docs/MEASO-figures.zip"</span>), <span class="dt">files =</span> bfiles)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/files">file.remove</a></span>(bfiles)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co">#&gt;  [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="co">#&gt; [15] TRUE TRUE TRUE TRUE TRUE TRUE TRUE</span></a></code></pre></div>
 </div>
   </div>
 
